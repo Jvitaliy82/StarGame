@@ -1,0 +1,26 @@
+
+moveButtons.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+arrowRight
+  rotate: false
+  xy: 1, 1
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+redButton
+  rotate: false
+  xy: 259, 1
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+arrowLeft
+  rotate: false
+  xy: 517, 1
+  size: 254, 256
+  orig: 254, 256
+  offset: 0, 0
+  index: -1
