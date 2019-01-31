@@ -21,6 +21,10 @@ public class MainShip extends Sprite {
 
     public boolean isPressedLeft;
     public boolean isPressedRight;
+    public boolean isShoot;
+
+    private float reloadInterval;
+    private float reloadTimer;
 
     private BulletPool bulletPool;
     private TextureRegion bulletRegion;
@@ -30,6 +34,7 @@ public class MainShip extends Sprite {
         shootMainShip = Gdx.audio.newSound(Gdx.files.internal("sounds/shootMainShip1.mp3"));
         this.bulletPool = bulletPool;
         this.bulletRegion = atlas.findRegion("bulletMainShip");
+        this.reloadInterval = 0.2f;
         setHeightProportion(0.15f);
     }
 
@@ -43,6 +48,14 @@ public class MainShip extends Sprite {
     @Override
     public void update(float delta) {
         super.update(delta);
+        if (reloadTimer < reloadInterval) reloadTimer += delta;
+        if (reloadTimer >= reloadInterval) {
+
+            if (isShoot) {
+                shoot();
+                reloadTimer = 0.00f;
+            }
+        }
         if (pos.cpy().mulAdd(v, delta).x - halfWidth < worldBounds.getLeft() ||
             pos.cpy().mulAdd(v, delta).x + halfWidth > worldBounds.getRight()) {
             stop();

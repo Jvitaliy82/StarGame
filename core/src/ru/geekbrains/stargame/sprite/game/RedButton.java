@@ -29,7 +29,8 @@ public class RedButton extends ScaledTouchUpButton {
         if (isMe(touch)) {
             System.out.println("стрельба по кнопке!");
             isPressed = true;
-            action();
+            mainShip.isShoot = true;
+//            action();
         }
         return super.touchDown(touch, pointer);
     }
@@ -38,11 +39,14 @@ public class RedButton extends ScaledTouchUpButton {
     public boolean touchUp(Vector2 touch, int pointer) {
         System.out.println("красную кнопку отпустили");
         isPressed = false;
+        mainShip.isShoot = false;
         return super.touchUp(touch, pointer);
     }
 
     @Override
     public void action() {
-        if (isPressed) mainShip.shoot();
+        if (isPressed) {
+//            mainShip.shoot();
+        }
     }
 }
