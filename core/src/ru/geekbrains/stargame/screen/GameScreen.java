@@ -2,7 +2,6 @@ package ru.geekbrains.stargame.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -12,12 +11,18 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.stargame.base.Base2DScreen;
 import ru.geekbrains.stargame.math.Rect;
 import ru.geekbrains.stargame.pool.BulletPool;
+import ru.geekbrains.stargame.pool.EnemyPool;
+import ru.geekbrains.stargame.pool.ExplosionPool;
 import ru.geekbrains.stargame.sprite.Background;
 import ru.geekbrains.stargame.sprite.Star;
 import ru.geekbrains.stargame.sprite.game.ArrowLeft;
 import ru.geekbrains.stargame.sprite.game.ArrowRight;
+import ru.geekbrains.stargame.sprite.game.Explosion;
 import ru.geekbrains.stargame.sprite.game.MainShip;
 import ru.geekbrains.stargame.sprite.game.RedButton;
+import ru.geekbrains.stargame.utils.EnemyBigEmitter;
+import ru.geekbrains.stargame.utils.EnemyMediumEmitter;
+import ru.geekbrains.stargame.utils.EnemySmallEmitter;
 
 public class GameScreen extends Base2DScreen {
 
@@ -32,6 +37,11 @@ public class GameScreen extends Base2DScreen {
     private ArrowRight arrowRight;
     private RedButton redButton;
     private BulletPool bulletPool;
+    private ExplosionPool explosionPool;
+    private EnemyPool enemyPool;
+    private EnemySmallEmitter enemySmallEmitter;
+    private EnemyMediumEmitter enemyMediumEmitter;
+    private EnemyBigEmitter enemyBigEmitter;
 
     @Override
     public void show() {
@@ -53,6 +63,11 @@ public class GameScreen extends Base2DScreen {
         arrowLeft = new ArrowLeft(atlasButton, mainShip);
         arrowRight = new ArrowRight(atlasButton, mainShip);
         redButton = new RedButton(atlasButton, mainShip);
+        explosionPool = new ExplosionPool(atlas);
+        enemyPool = new EnemyPool(bulletPool, worldBounds);
+        enemySmallEmitter = new EnemySmallEmitter(atlas, enemyPool, worldBounds);
+        enemyMediumEmitter = new EnemyMediumEmitter(atlas, enemyPool, worldBounds);
+        enemyBigEmitter = new EnemyBigEmitter(atlas,enemyPool, worldBounds);
 
     }
 
@@ -71,10 +86,17 @@ public class GameScreen extends Base2DScreen {
         }
         mainShip.update(delta);
         bulletPool.updateActiveSprites(delta);
+        explosionPool.updateActiveSprites(delta);
+        enemyPool.updateActiveSprites(delta);
+        enemyPool.freeAllDestroyedActiveSprites();
+        enemySmallEmitter.generate(delta);
+        enemyMediumEmitter.generate(delta);
+        enemyBigEmitter.generate(delta);
     }
 
     public void deleteAllDestroyed() {
         bulletPool.freeAllDestroyedActiveSprites();
+        explosionPool.freeAllDestroyedActiveSprites();
     }
 
     public void draw() {
@@ -91,6 +113,8 @@ public class GameScreen extends Base2DScreen {
         arrowRight.draw(batch);
         redButton.draw(batch);
         bulletPool.drawActiveSprites(batch);
+        explosionPool.drawActiveSprites(batch);
+        enemyPool.drawActiveSprites(batch);
         batch.end();
     }
 
@@ -120,6 +144,8 @@ public class GameScreen extends Base2DScreen {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
+        Explosion explosion = explosionPool.obtain();
+        explosion.set(0.15f, touch);
         arrowLeft.touchDown(touch, pointer);
         arrowRight.touchDown(touch, pointer);
         redButton.touchDown(touch, pointer);
@@ -140,6 +166,9 @@ public class GameScreen extends Base2DScreen {
         atlas.dispose();
         atlasButton.dispose();
         bulletPool.dispose();
+        explosionPool.dispose();
+        mainShip.dispose();
+        enemyPool.dispose();
         super.dispose();
     }
 }

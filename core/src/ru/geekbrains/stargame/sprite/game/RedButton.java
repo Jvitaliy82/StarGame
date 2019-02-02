@@ -10,6 +10,7 @@ public class RedButton extends ScaledTouchUpButton {
 
     private MainShip mainShip;
     private boolean isPressed;
+    private int pointer;
 
     public RedButton(TextureAtlas atlas, MainShip mainShip) {
         super(atlas.findRegion("redButton"));
@@ -27,9 +28,9 @@ public class RedButton extends ScaledTouchUpButton {
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
         if (isMe(touch)) {
-            System.out.println("стрельба по кнопке!");
             isPressed = true;
             mainShip.isShoot = true;
+            this.pointer = pointer;
 //            action();
         }
         return super.touchDown(touch, pointer);
@@ -37,9 +38,10 @@ public class RedButton extends ScaledTouchUpButton {
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
-        System.out.println("красную кнопку отпустили");
-        isPressed = false;
-        mainShip.isShoot = false;
+        if (this.pointer == pointer) {
+            isPressed = false;
+            mainShip.isShoot = false;
+        }
         return super.touchUp(touch, pointer);
     }
 
