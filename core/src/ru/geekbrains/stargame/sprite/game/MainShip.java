@@ -12,37 +12,52 @@ import ru.geekbrains.stargame.math.Rect;
 import ru.geekbrains.stargame.pool.BulletPool;
 
 
-public class MainShip extends Sprite {
+public class MainShip extends Ships {
 
-    private Sound shootMainShip;
-    private Rect worldBounds;
+
+
     private final Vector2 v0 = new Vector2(0.5f, 0);
-    private Vector2 v = new Vector2();
+
 
     public boolean isPressedLeft;
     public boolean isPressedRight;
+    public boolean isShoot;
 
-    private BulletPool bulletPool;
-    private TextureRegion bulletRegion;
+
+
+
+
 
     public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
-        shootMainShip = Gdx.audio.newSound(Gdx.files.internal("sounds/shootMainShip1.mp3"));
+        shootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shootMainShip1.mp3"));
         this.bulletPool = bulletPool;
         this.bulletRegion = atlas.findRegion("bulletMainShip");
+        this.reloadInterval = 0.2f;
         setHeightProportion(0.15f);
+        this.bulletV = new Vector2(0, 0.5f);
+        this.bulletHeight = 0.01f;
+        this.damege = 1;
+        this.hp = 100;
     }
 
     @Override
     public void resize(Rect worldBounds) {
         super.resize(worldBounds);
-        this.worldBounds = worldBounds;
         setBottom(worldBounds.getBottom() + 0.05f);
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
+        if (reloadTimer < reloadInterval) reloadTimer += delta;
+        if (reloadTimer >= reloadInterval) {
+
+            if (isShoot) {
+                shoot();
+                reloadTimer = 0.00f;
+            }
+        }
         if (pos.cpy().mulAdd(v, delta).x - halfWidth < worldBounds.getLeft() ||
             pos.cpy().mulAdd(v, delta).x + halfWidth > worldBounds.getRight()) {
             stop();
@@ -122,11 +137,7 @@ public class MainShip extends Sprite {
         return false;
     }
 
-    public void shoot() {
-        shootMainShip.play();
-        Bullet bullet = bulletPool.obtain();
-        bullet.set(this, bulletRegion, pos, new Vector2(0, 0.5f), 0.01f, worldBounds, 1);
-    }
+
 
 
 
