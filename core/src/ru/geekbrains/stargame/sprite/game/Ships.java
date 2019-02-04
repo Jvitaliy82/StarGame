@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.stargame.base.Sprite;
 import ru.geekbrains.stargame.math.Rect;
 import ru.geekbrains.stargame.pool.BulletPool;
+import ru.geekbrains.stargame.pool.ExplosionPool;
 
 public class Ships extends Sprite {
 
@@ -18,9 +19,12 @@ public class Ships extends Sprite {
     protected int damege;
     protected int hp;
     protected TextureRegion bulletRegion;
-
+    protected ExplosionPool explosionPool;
     protected float reloadInterval;
     protected float reloadTimer;
+
+    private float damageInterval = 0.1f;
+    private float damageTimer = damageInterval;
 
     protected Sound shootSound;
 
@@ -31,6 +35,16 @@ public class Ships extends Sprite {
 
     public Ships(TextureRegion region, int rows, int cols, int frames) {
         super(region, rows, cols, frames);
+    }
+
+
+    @Override
+    public void update(float delta) {
+        super.update(delta);
+        damageTimer += delta;
+        if (damageTimer >= damageInterval) {
+            frame = 0;
+        }
     }
 
     @Override
@@ -44,6 +58,26 @@ public class Ships extends Sprite {
         shootSound.play();
         Bullet bullet = bulletPool.obtain();
         bullet.set(this, bulletRegion, pos, bulletV, bulletHeight, worldBounds, damege);
+    }
+
+    public void boom () {
+        Explosion explosion = explosionPool.obtain();
+        System.out.println("получен взрыв");
+        explosion.set(getHeight(), pos);
+    }
+
+    public  void damage(int damege) {
+        frame = 1;
+        damageTimer = 0f;
+        hp -= damege;
+        if (hp <= 0) {
+            destroy();
+            boom();
+        }
+    }
+
+    public int getDamege() {
+        return damege;
     }
 
     public void dispose(){

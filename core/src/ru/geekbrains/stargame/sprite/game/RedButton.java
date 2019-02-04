@@ -31,7 +31,6 @@ public class RedButton extends ScaledTouchUpButton {
             isPressed = true;
             mainShip.isShoot = true;
             this.pointer = pointer;
-//            action();
         }
         return super.touchDown(touch, pointer);
     }
@@ -47,8 +46,6 @@ public class RedButton extends ScaledTouchUpButton {
 
     @Override
     public void action() {
-        if (isPressed) {
-//            mainShip.shoot();
-        }
+
     }
 }
