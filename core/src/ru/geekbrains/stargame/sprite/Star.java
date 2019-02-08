@@ -38,6 +38,5 @@ public class Star extends Sprite {
         float posX = Rnd.nextFloat(worldBounds.getLeft(), worldBounds.getRight());
         float posY = Rnd.nextFloat(worldBounds.getBottom(), worldBounds.getTop());
         pos.set(posX, posY);
-        System.out.println("координаты звезды " + posX + " " + posY);
     }
 }

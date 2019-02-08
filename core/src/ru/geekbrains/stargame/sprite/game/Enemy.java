@@ -6,17 +6,23 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.stargame.math.Rect;
 import ru.geekbrains.stargame.pool.BulletPool;
+import ru.geekbrains.stargame.pool.ExplosionPool;
 
 public class Enemy extends Ships {
 
+    private enum State {DESCENT, FIGHT}
+
     private Vector2 v0 = new Vector2();
+    private State state;
+    private Vector2 descentV = new Vector2(0, -0.15f);
 
 
 
-    public Enemy(Sound shotSound, BulletPool bulletPool, Rect worldBounds) {
+    public Enemy(Sound shotSound, BulletPool bulletPool, ExplosionPool explosionPool, Rect worldBounds) {
         super();
         this.shootSound = shotSound;
         this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
         this.v.set(v0);
         this.bulletV = new Vector2();
         this.worldBounds = worldBounds;
@@ -27,14 +33,26 @@ public class Enemy extends Ships {
     public void update(float delta) {
         super.update(delta);
         this.pos.mulAdd(v, delta);
-        if (isOutside(worldBounds)) {
-            destroy();
+        switch (state) {
+            case DESCENT:
+                if (getTop() <= worldBounds.getTop()) {
+                    v.set(v0);
+                    state = State.FIGHT;
+                    break;
+                }
+            case FIGHT:
+                if (getBottom() < worldBounds.getBottom()) {
+                    destroy();
+                    boom();
+                }
+                reloadTimer += delta;
+                if (reloadTimer >= reloadInterval) {
+                    reloadTimer = 0;
+                    shoot();
+                }
+                break;
         }
-        reloadTimer += delta;
-        if (reloadTimer >= reloadInterval) {
-            reloadTimer = 0;
-            shoot();
-        }
+
      }
 
     public void set (
@@ -57,6 +75,16 @@ public class Enemy extends Ships {
         this.reloadInterval = reloadInterval;
         setHeightProportion(height);
         this.hp = hp;
-        v.set(v0);
+        v.set(descentV);
+        state = State.DESCENT;
+    }
+
+    public boolean isBulletCollision(Rect bullet) {
+        return !(bullet.getRight() < getLeft() ||
+                bullet.getLeft() > getRight() ||
+                bullet.getBottom() > getTop() ||
+                bullet.getTop() < pos.y
+
+        );
     }
 }

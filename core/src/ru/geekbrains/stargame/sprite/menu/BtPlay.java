@@ -32,7 +32,7 @@ public class BtPlay extends ScaledTouchUpButton{
     @Override
     public void action() {
         System.out.println("нажата play");
-        game.setScreen(new GameScreen());
+        game.setScreen(new GameScreen(game));
 
 
     }
