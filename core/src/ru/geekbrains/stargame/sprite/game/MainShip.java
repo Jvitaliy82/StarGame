@@ -37,12 +37,12 @@ public class MainShip extends Ships {
         this.bulletPool = bulletPool;
         this.explosionPool = explosionPool;
         this.bulletRegion = atlas.findRegion("bulletMainShip");
-        this.reloadInterval = 0.2f;
+        this.reloadInterval = 0.1f;
         setHeightProportion(0.15f);
-        this.bulletV = new Vector2(0, 0.5f);
+        this.bulletV = new Vector2(0, 0.7f);
         this.bulletHeight = 0.01f;
         this.damege = 1;
-        this.hp = 1;
+        this.hp = 100;
     }
 
     @Override

@@ -55,7 +55,7 @@ public class Ships extends Sprite {
     }
 
     public void shoot() {
-        shootSound.play();
+        shootSound.play(1, 1, -1f);
         Bullet bullet = bulletPool.obtain();
         bullet.set(this, bulletRegion, pos, bulletV, bulletHeight, worldBounds, damege);
     }
@@ -71,9 +71,14 @@ public class Ships extends Sprite {
         damageTimer = 0f;
         hp -= damege;
         if (hp <= 0) {
+            hp = 0;
             destroy();
             boom();
         }
+    }
+
+    public int getHp() {
+        return hp;
     }
 
     public int getDamege() {

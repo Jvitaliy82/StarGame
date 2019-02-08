@@ -2,11 +2,13 @@ package ru.geekbrains.stargame.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 
 import java.util.List;
 
@@ -23,15 +25,21 @@ import ru.geekbrains.stargame.sprite.game.ArrowRight;
 import ru.geekbrains.stargame.sprite.game.Bullet;
 import ru.geekbrains.stargame.sprite.game.Enemy;
 import ru.geekbrains.stargame.sprite.game.GameOver;
+import ru.geekbrains.stargame.sprite.game.Live;
 import ru.geekbrains.stargame.sprite.game.MainShip;
 import ru.geekbrains.stargame.sprite.game.NewGame;
 import ru.geekbrains.stargame.sprite.game.RedButton;
 import ru.geekbrains.stargame.utils.EnemyEmitter;
+import ru.geekbrains.stargame.utils.Font;
 
 public class GameScreen extends Base2DScreen {
 
+    private static final String FRAGS = "Frags: ";
+    private static final String HP = "XP: ";
+    private static final String LEVEL = "Level: ";
     private Music gameMusic;
     private Texture bg;
+    private TextureAtlas lv;
     private Background background;
     private TextureAtlas atlas;
     private TextureAtlas atlasButton;
@@ -48,6 +56,12 @@ public class GameScreen extends Base2DScreen {
     private GameOver gameOver;
     private NewGame newGame;
     private StarGame game;
+    private Font font;
+    private StringBuilder sbFrags = new StringBuilder();
+    private StringBuilder sbXp = new StringBuilder();
+    private StringBuilder sbLevel = new StringBuilder();
+    private int frags;
+    private Live live;
 
     public GameScreen(StarGame game) {
         this.game = game;
@@ -61,6 +75,7 @@ public class GameScreen extends Base2DScreen {
         gameMusic.setLooping(true);
         gameMusic.play();
         bg = new Texture("textures/bg.png");
+        lv = new TextureAtlas("statusBar/statusBar.tpack");
         background = new Background(new TextureRegion(bg));
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
         atlasButton = new TextureAtlas("textures/moveButtons.pack");
@@ -77,7 +92,10 @@ public class GameScreen extends Base2DScreen {
         arrowRight = new ArrowRight(atlasButton, mainShip);
         redButton = new RedButton(atlasButton, mainShip);
         gameOver = new GameOver(atlas);
+        this.font = new Font("font/font.fnt", "font/font.png");
+        this.font.setSize(0.02f);
         newGame = new NewGame(atlas, game);
+        live = new Live(lv, mainShip);
 
 
 
@@ -105,7 +123,9 @@ public class GameScreen extends Base2DScreen {
         explosionPool.updateActiveSprites(delta);
         enemyPool.updateActiveSprites(delta);
         enemyPool.freeAllDestroyedActiveSprites();
-        enemyEmitter.generate(delta);
+        enemyEmitter.generate(delta, frags);
+        live.update(delta, arrowRight.getRight(),
+                (worldBounds.getWidth() - redButton.getWidth() - arrowLeft.getWidth() * 2) / (100 / (float) mainShip.getHp()));
         if (isStopGame()) {
             gameOver.update(delta);
             newGame.update(delta);
@@ -147,6 +167,10 @@ public class GameScreen extends Base2DScreen {
                 if (enemy.isBulletCollision(bullet)) {
                     enemy.damage(mainShip.getDamege());
                     bullet.destroy();
+                    if (enemy.isDestroyed()) {
+                        frags++;
+                    }
+
                 }
             }
         }
@@ -182,7 +206,18 @@ public class GameScreen extends Base2DScreen {
             gameOver.draw(batch);
             newGame.draw(batch);
         }
+        printInfo();
+        live.draw(batch);
         batch.end();
+    }
+
+    public void printInfo() {
+        sbFrags.setLength(0);
+        sbXp.setLength(0);
+        sbLevel.setLength(0);
+        font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.getLeft(), worldBounds.getTop());
+        font.draw(batch, sbXp.append(HP).append(mainShip.getHp()), worldBounds.pos.x, worldBounds.getTop(), Align.center);
+        font.draw(batch, sbLevel.append(LEVEL).append(enemyEmitter.getLevel()), worldBounds.getRight(), worldBounds.getTop(), Align.right);
     }
 
     @Override
@@ -196,6 +231,7 @@ public class GameScreen extends Base2DScreen {
         arrowRight.resize(worldBounds);
         redButton.resize(worldBounds);
         gameOver.resize(worldBounds);
+        live.resize(worldBounds);
     }
 
     @Override
@@ -236,6 +272,8 @@ public class GameScreen extends Base2DScreen {
         explosionPool.dispose();
         mainShip.dispose();
         enemyPool.dispose();
+        font.dispose();
+        lv.dispose();
         super.dispose();
     }
 
