@@ -48,6 +48,8 @@ public class EnemyEmitter {
 
     private Rect worldBounds;
 
+    private int level;
+
     public EnemyEmitter(TextureAtlas atlas, EnemyPool enemyPool, Rect worldBounds, GameScreen gameScreen) {
         this.gameScreen = gameScreen;
         this.enemyPool = enemyPool;
@@ -61,7 +63,8 @@ public class EnemyEmitter {
         this.worldBounds = worldBounds;
     }
 
-    public void generate (float delta) {
+    public void generate (float delta, int frags) {
+        level = frags / 10 + 1;
         generateTimer += delta;
         if (generateTimer >= generateInterval && !gameScreen.isStopGame()) {
             generateTimer = 0f;
@@ -80,7 +83,7 @@ public class EnemyEmitter {
                         ENEMY_SMALL_DAMEGE,
                         ENEMY_SMALL_RELOAD_INTERVAL,
                         ENEMY_SMALL_HEIGHT,
-                        ENEMY_SMALL_HP
+                        ENEMY_SMALL_HP + level
                 );
             } else if (type < 0.7f) {
                 enemyMediumV.x = enemyVX;
@@ -93,7 +96,7 @@ public class EnemyEmitter {
                         ENEMY_MEDIUM_DAMEGE,
                         ENEMY_MEDIUM_RELOAD_INTERVAL,
                         ENEMY_MEDIUM_HEIGHT,
-                        ENEMY_MEDIUM_HP
+                        ENEMY_MEDIUM_HP + level
                 );
             } else {
                 enemyBigV.x = enemyVX;
@@ -106,13 +109,17 @@ public class EnemyEmitter {
                         ENEMY_BIG_DAMEGE,
                         ENEMY_BIG_RELOAD_INTERVAL,
                         ENEMY_BIG_HEIGHT,
-                        ENEMY_BIG_HP
+                        ENEMY_BIG_HP + level
                 );
             }
 
             enemy.pos.x = Rnd.nextFloat(worldBounds.getLeft() + enemy.getHalfWidth(), worldBounds.getRight() - enemy.getHalfWidth());
             enemy.setBottom(worldBounds.getTop());
         }
+    }
+
+    public int getLevel(){
+        return level;
     }
 
 }
