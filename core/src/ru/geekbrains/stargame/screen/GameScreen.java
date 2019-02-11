@@ -198,6 +198,7 @@ public class GameScreen extends Base2DScreen {
             arrowLeft.draw(batch);
             arrowRight.draw(batch);
             redButton.draw(batch);
+            live.draw(batch);
         }
         bulletPool.drawActiveSprites(batch);
         explosionPool.drawActiveSprites(batch);
@@ -207,7 +208,6 @@ public class GameScreen extends Base2DScreen {
             newGame.draw(batch);
         }
         printInfo();
-        live.draw(batch);
         batch.end();
     }
 

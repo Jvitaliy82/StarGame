@@ -8,12 +8,12 @@ import ru.geekbrains.stargame.math.Rect;
 
 public class Live extends Sprite {
 
-    private MainShip mainShip;
+    private Ships T;
 
-    public Live(TextureAtlas atlas, MainShip mainShip) {
+    public Live(TextureAtlas atlas, Ships T) {
         super(atlas.findRegion("live"), 1, 3, 3);
         setHeight(0.02f);
-        this.mainShip = mainShip;
+        this.T = T;
         frame = 1;
 
 
@@ -30,9 +30,9 @@ public class Live extends Sprite {
         super.update(delta);
         setWidth(width);
         setLeft(left);
-        if (mainShip.getHp() < 25) {
+        if (T.getHp() < 25) {
             frame = 0;
-        } else if (mainShip.getHp() < 75) {
+        } else if (T.getHp() < 75) {
             frame = 2;
         }
 

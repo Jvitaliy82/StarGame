@@ -42,7 +42,7 @@ public class MainShip extends Ships {
         this.bulletV = new Vector2(0, 0.7f);
         this.bulletHeight = 0.01f;
         this.damege = 1;
-        this.hp = 100;
+        this.hp = 10;
     }
 
     @Override
@@ -87,7 +87,8 @@ public class MainShip extends Ships {
                 break;
             case Input.Keys.SPACE:
                 System.out.println("стрельба по пробелу");
-                shoot();
+                isShoot = true;
+//                shoot();
                 break;
         }
         return false;
@@ -112,6 +113,9 @@ public class MainShip extends Ships {
                 } else {
                     stop();
                 }
+                break;
+            case Input.Keys.SPACE:
+                isShoot = false;
                 break;
         }
         return false;
