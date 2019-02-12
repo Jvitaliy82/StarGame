@@ -43,6 +43,7 @@ public class MainShip extends Ships {
         this.bulletHeight = 0.01f;
         this.damege = 1;
         this.hp = 10;
+        this.maxHp = hp;
     }
 
     @Override
@@ -59,7 +60,7 @@ public class MainShip extends Ships {
 
             if (isShoot) {
                 shoot();
-                reloadTimer = 0.00f;
+                reloadTimer = 0.01f;
             }
         }
         if (pos.cpy().mulAdd(v, delta).x - halfWidth < worldBounds.getLeft() ||

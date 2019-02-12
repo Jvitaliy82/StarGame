@@ -18,6 +18,7 @@ public class Ships extends Sprite {
     protected float bulletHeight;
     protected int damege;
     protected int hp;
+    protected int maxHp;
     protected TextureRegion bulletRegion;
     protected ExplosionPool explosionPool;
     protected float reloadInterval;
@@ -62,7 +63,6 @@ public class Ships extends Sprite {
 
     public void boom () {
         Explosion explosion = explosionPool.obtain();
-        System.out.println("получен взрыв");
         explosion.set(getHeight(), pos);
     }
 
@@ -79,6 +79,10 @@ public class Ships extends Sprite {
 
     public int getHp() {
         return hp;
+    }
+
+    public int getMaxHp() {
+        return maxHp;
     }
 
     public int getDamege() {

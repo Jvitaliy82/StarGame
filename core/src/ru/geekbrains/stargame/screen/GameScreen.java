@@ -125,7 +125,8 @@ public class GameScreen extends Base2DScreen {
         enemyPool.freeAllDestroyedActiveSprites();
         enemyEmitter.generate(delta, frags);
         live.update(delta, arrowRight.getRight(),
-                (worldBounds.getWidth() - redButton.getWidth() - arrowLeft.getWidth() * 2) / (100 / (float) mainShip.getHp()));
+                (worldBounds.getWidth() - redButton.getWidth() - arrowLeft.getWidth() * 2) *
+                        ((float) mainShip.getHp()) / mainShip.getMaxHp());
         if (isStopGame()) {
             gameOver.update(delta);
             newGame.update(delta);

@@ -30,9 +30,9 @@ public class Live extends Sprite {
         super.update(delta);
         setWidth(width);
         setLeft(left);
-        if (T.getHp() < 25) {
+        if ((float) T.getHp() / T.getMaxHp() < 0.25f) {
             frame = 0;
-        } else if (T.getHp() < 75) {
+        } else if ((float) T.getHp() / T.getMaxHp() < 0.75f) {
             frame = 2;
         }
 
